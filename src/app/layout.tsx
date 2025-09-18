@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,9 +22,9 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "ServiceBay",
   description:
-    "10x faster dispatch. Voice-powered service orders. Predictive repairs. Automated customer communication.",
+    "Real-time service request tracking. Monitor your repair progress from dispatch to completion.",
   icons: {
-    icon: "servicebay-blue.svg",
+    icon: "/servicebay-blue.svg",
   },
 };
 
@@ -38,6 +39,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

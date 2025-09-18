@@ -26,8 +26,8 @@ export default function NotFound() {
 
           <h2 className="text-3xl font-bold mb-4">Request Not Found</h2>
           <p className="text-lg text-muted-foreground mb-8">
-            The service request you're looking for doesn't exist or may have
-            been removed.
+            The service request you&apos;re looking for doesn&apos;t exist or
+            may have been removed.
           </p>
 
           <div className="space-y-4">
@@ -37,7 +37,7 @@ export default function NotFound() {
                 <li>• The request ID is incorrect</li>
                 <li>• The request has been completed and archived</li>
                 <li>• The request was cancelled</li>
-                <li>• You don't have permission to view this request</li>
+                <li>• You don&apos;t have permission to view this request</li>
               </ul>
             </div>
 

@@ -1,5 +1,5 @@
 "use client";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,24 +10,15 @@ import { StatusProgress } from "./StatusProgress";
 import { StatusCard } from "./StatusCard";
 import { TechnicianCard } from "@/app/tracker/_components/tracker/TechnicianCard";
 // import { GPSTrackingMap } from "@/app/tracker/_components/tracker/GPSTrackingMap";
-import { useToast } from "@/hooks/use-toast";
-import {
-  CheckCircle,
-  Clock,
-  MapPin,
-  Wrench,
-  FileText,
-  CreditCard,
-  User,
-  AlertCircle,
-} from "lucide-react";
+import { toast } from "sonner";
+import { Clock } from "lucide-react";
 import { STATUSES } from "../constants/service-status";
 
 export interface ServiceStatus {
   id: number;
   title: string;
   description: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   completed: boolean;
   active: boolean;
   timestamp?: string;
@@ -40,7 +31,6 @@ interface TrackerProps {
 
 const Tracker = ({ params }: TrackerProps) => {
   const searchParams = useSearchParams();
-  const { toast } = useToast();
   const [manualRequestId, setManualRequestId] = useState("");
   const [statuses, setStatuses] = useState<ServiceStatus[]>(STATUSES);
   const [currentStatus, setCurrentStatus] = useState(1);
@@ -62,8 +52,7 @@ const Tracker = ({ params }: TrackerProps) => {
   useEffect(() => {
     if (manualRequestId) {
       setIsConnected(true);
-      toast({
-        title: "Connected",
+      toast.success("Connected", {
         description: "Real-time tracking active for request " + manualRequestId,
       });
 
@@ -86,8 +75,7 @@ const Tracker = ({ params }: TrackerProps) => {
             );
 
             if (newStatus <= STATUSES.length) {
-              toast({
-                title: "Status Updated",
+              toast.info("Status Updated", {
                 description: STATUSES[newStatus - 1]?.title,
               });
             }
@@ -100,7 +88,7 @@ const Tracker = ({ params }: TrackerProps) => {
 
       return () => clearInterval(interval);
     }
-  }, [manualRequestId, toast]);
+  }, [manualRequestId]);
 
   const handleTrackRequest = () => {
     if (manualRequestId.trim()) {
@@ -116,8 +104,7 @@ const Tracker = ({ params }: TrackerProps) => {
       );
 
       setIsConnected(true);
-      toast({
-        title: "Tracking Started",
+      toast.success("Tracking Started", {
         description: `Now tracking request ${manualRequestId}`,
       });
     }

@@ -1,5 +1,6 @@
 "use client";
-import { useParams, useSearchParams } from "next/navigation";
+
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect, use } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,27 +9,18 @@ import { Button } from "@/components/ui/button";
 import { StatusProgress } from "./_components/StatusProgress";
 import { StatusCard } from "./_components/StatusCard";
 import { TechnicianCard } from "@/app/tracker/_components/tracker/TechnicianCard";
-// import { GPSTrackingMap } from "@/app/tracker/_components/tracker/GPSTrackingMap";
+import { MapComponent } from "./_components/MapComponent";
 import { STATUSES } from "./constants/service-status";
-import {
-  CheckCircle,
-  Clock,
-  MapPin,
-  Wrench,
-  FileText,
-  CreditCard,
-  User,
-  AlertCircle,
-  Badge,
-} from "lucide-react";
-import ServiceBayBlue from "../../assets/service-bay-blue.png";
+import { Clock } from "lucide-react";
+import ServiceBay from "../../assets/service-bay-white.png";
+import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
 export interface ServiceStatus {
   id: number;
   title: string;
   description: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   completed: boolean;
   active: boolean;
   timestamp?: string;
@@ -46,10 +38,8 @@ const Tracker = ({ params }: TrackerProps) => {
   const [currentStatus, setCurrentStatus] = useState(1);
   const [isConnected, setIsConnected] = useState(false);
 
-  // Unwrap the params Promise
   const resolvedParams = use(params);
 
-  // Extract request ID from URL or search params
   useEffect(() => {
     if (resolvedParams.id) {
       setManualRequestId(resolvedParams.id);
@@ -61,12 +51,10 @@ const Tracker = ({ params }: TrackerProps) => {
     }
   }, [resolvedParams.id, searchParams]);
 
-  // Simulate WebSocket connection and status updates
   useEffect(() => {
     if (manualRequestId) {
       setIsConnected(true);
 
-      // Simulate status progression
       const interval = setInterval(() => {
         setCurrentStatus((prev) => {
           if (prev < STATUSES.length) {
@@ -91,7 +79,7 @@ const Tracker = ({ params }: TrackerProps) => {
           }
           return prev;
         });
-      }, 3000); // Update every 3 seconds for demo
+      }, 10000);
 
       return () => clearInterval(interval);
     }
@@ -99,7 +87,6 @@ const Tracker = ({ params }: TrackerProps) => {
 
   const handleTrackRequest = () => {
     if (manualRequestId.trim()) {
-      // Reset tracking
       setCurrentStatus(1);
       setStatuses(
         STATUSES.map((status, index) => ({
@@ -117,46 +104,53 @@ const Tracker = ({ params }: TrackerProps) => {
   const currentProgress = ((currentStatus - 1) / STATUSES.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-servicebay-gradient-blue  text-white">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col items-center gap-6 text-center">
-            <Image
-              src={ServiceBayBlue}
-              alt="ServiceBay"
-              width={60}
-              height={60}
-            />
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                ServiceBay AI
-              </h1>
-              <p className="text-lg opacity-90">Customer Request Tracker</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-emerald-600 text-white relative overflow-hidden py-20">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="container mx-auto px-4 py-16 md:py-20 relative z-10">
+          <div className="flex flex-col items-center gap-4 md:gap-6 text-center">
+            <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-4">
+              <Image
+                src={ServiceBay}
+                alt="ServiceBay"
+                width={80}
+                height={80}
+                className="drop-shadow-lg w-16 h-16 sm:w-20 sm:h-20"
+              />
+              <div className="text-center sm:text-left">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                  ServiceBay
+                </h1>
+                <p className="text-base sm:text-lg opacity-90 font-light">
+                  Real-time Customer Request Tracking
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Request ID Input */}
-        <Card className="mb-8 p-6 shadow-card">
-          <div className="space-y-4">
+      <div className="container mx-auto px-4 py-12 max-w-6xl">
+        <Card className="relative -mt-32 z-10 mb-8 md:mb-12 p-6 md:p-8 shadow-2xl bg-white/95 backdrop-blur-sm border-0 mx-2 md:mx-4">
+          <div className="space-y-4 md:space-y-6">
             <div>
-              <Label htmlFor="request-id" className="text-base font-medium">
+              <Label
+                htmlFor="request-id"
+                className="text-base md:text-lg font-semibold text-gray-700"
+              >
                 Request ID
               </Label>
-              <div className="flex gap-2 mt-2">
+              <div className="flex flex-col sm:flex-row gap-3 mt-3">
                 <Input
                   id="request-id"
                   value={manualRequestId}
                   onChange={(e) => setManualRequestId(e.target.value)}
                   placeholder="Enter your request ID"
-                  className="flex-1"
+                  className="flex-1 h-10 md:h-12 text-base md:text-lg border-2 border-gray-200 focus:border-blue-500 rounded-xl"
                 />
                 <Button
                   onClick={handleTrackRequest}
-                  className="bg-servicebay-blue hover:bg-servicebay-blue/90"
+                  className="h-10 md:h-12 px-6 md:px-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Track Request
                 </Button>
@@ -164,9 +158,9 @@ const Tracker = ({ params }: TrackerProps) => {
             </div>
 
             {isConnected && (
-              <div className="flex items-center gap-2 text-sm text-servicebay-green">
-                <div className="w-2 h-2 bg-servicebay-green rounded-full animate-pulse-soft"></div>
-                Real-time tracking active
+              <div className="flex items-center gap-3 text-xs md:text-sm text-green-600 bg-green-50 p-2 md:p-3 rounded-lg">
+                <div className="w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="font-medium">Real-time tracking active</span>
               </div>
             )}
           </div>
@@ -174,35 +168,54 @@ const Tracker = ({ params }: TrackerProps) => {
 
         {manualRequestId && (
           <>
-            {/* Progress Overview */}
-            <Card className="mb-8 p-6 shadow-card bg-gradient-card">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold">Request Progress</h2>
-                  <Badge className="bg-servicebay-blue-light text-servicebay-blue">
+            <Card className="mb-8 md:mb-12 p-6 md:p-8 shadow-2xl bg-gradient-to-br from-white to-blue-50 border-0">
+              <div className="space-y-4 md:space-y-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                    Request Progress
+                  </h2>
+                  <Badge className="bg-blue-100 text-blue-700 px-3 md:px-4 py-1 md:py-2 text-xs md:text-sm font-semibold">
                     {Math.round(currentProgress)}% Complete
                   </Badge>
                 </div>
                 <StatusProgress progress={currentProgress} />
-                <div className="text-center text-sm text-muted-foreground">
+                <div className="text-center text-xs md:text-sm text-gray-600 font-medium">
                   Step {currentStatus} of {STATUSES.length}
                 </div>
               </div>
             </Card>
 
-            {/* Technician Card - Show when technician is assigned */}
-            {currentStatus >= 2 && <TechnicianCard />}
+            {currentStatus >= 3 && <TechnicianCard />}
 
-            {/* GPS Tracking Map - Show when technician is en route */}
-            {/* {currentStatus >= 3 && currentStatus < 4 && (
-              <GPSTrackingMap
-                technicianName="Jake"
-                estimatedArrival="15 mins"
-              />
-            )} */}
+            {currentStatus === 4 && (
+              <Card className="mb-8 md:mb-12 p-6 md:p-8 shadow-2xl bg-white border-0">
+                <div className="space-y-4 md:space-y-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                      Technician Location
+                    </h2>
+                    <Badge className="bg-green-100 text-green-700 px-3 md:px-4 py-1 md:py-2 text-xs md:text-sm font-semibold">
+                      En Route
+                    </Badge>
+                  </div>
+                  <p className="text-sm md:text-base text-gray-600">
+                    Track Jake Thompson's real-time location as he heads to your
+                    service location.
+                  </p>
+                  <MapComponent
+                    technicianLocation={[40.7128, -74.006]} // New York City coordinates (example)
+                    customerLocation={[40.7589, -73.9851]} // Times Square coordinates (example)
+                    technicianName="Jake Thompson"
+                    estimatedArrival="15 minutes"
+                  />
+                </div>
+              </Card>
+            )}
 
-            {/* Status Timeline */}
-            <div className="space-y-4">
+            <div className="space-y-4 md:space-y-6">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">
+                Status Timeline
+              </h2>
               {statuses.map((status, index) => (
                 <StatusCard
                   key={status.id}
@@ -215,12 +228,14 @@ const Tracker = ({ params }: TrackerProps) => {
         )}
 
         {!manualRequestId && (
-          <Card className="p-12 text-center shadow-card">
-            <Clock className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-xl font-semibold mb-2">
+          <Card className="p-8 md:p-16 text-center shadow-2xl bg-white/80 backdrop-blur-sm border-0">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+              <Clock className="w-8 h-8 md:w-10 md:h-10 text-gray-400" />
+            </div>
+            <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-gray-900">
               Ready to Track Your Request
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-base md:text-lg text-gray-600 max-w-md mx-auto px-4">
               Enter your request ID above to start real-time tracking of your
               service request.
             </p>
