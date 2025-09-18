@@ -199,8 +199,8 @@ const Tracker = ({ params }: TrackerProps) => {
                     </Badge>
                   </div>
                   <p className="text-sm md:text-base text-gray-600">
-                    Track Jake Thompson's real-time location as he heads to your
-                    service location.
+                    Track Jake Thompson&apos;s real-time location as he heads to
+                    your service location.
                   </p>
                   <MapComponent
                     technicianLocation={[40.7128, -74.006]} // New York City coordinates (example)
