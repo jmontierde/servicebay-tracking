@@ -79,7 +79,7 @@ const Tracker = ({ params }: TrackerProps) => {
           }
           return prev;
         });
-      }, 10000);
+      }, 3000);
 
       return () => clearInterval(interval);
     }
@@ -131,7 +131,26 @@ const Tracker = ({ params }: TrackerProps) => {
       </div>
 
       <div className="container mx-auto px-4 py-12 max-w-6xl">
-        <Card className="relative -mt-32 z-10 mb-8 md:mb-12 p-6 md:p-8 shadow-2xl bg-white/95 backdrop-blur-sm border-0 mx-2 md:mx-4">
+        {manualRequestId && (
+          <Card className="relative -mt-32 z-10 mb-8 md:mb-12 p-6 md:p-8 shadow-2xl bg-white/95 backdrop-blur-sm border-0 mx-2 md:mx-4">
+            <div className="space-y-4 md:space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                  Request Progress
+                </h2>
+                <Badge className="bg-blue-100 text-blue-700 px-3 md:px-4 py-1 md:py-2 text-xs md:text-sm font-semibold">
+                  {Math.round(currentProgress)}% Complete
+                </Badge>
+              </div>
+              <StatusProgress progress={currentProgress} />
+              <div className="text-center text-xs md:text-sm text-gray-600 font-medium">
+                Step {currentStatus} of {STATUSES.length}
+              </div>
+            </div>
+          </Card>
+        )}
+
+        <Card className="mb-8 md:mb-12 p-6 md:p-8 shadow-2xl bg-gradient-to-br from-white to-blue-50 border-0">
           <div className="space-y-4 md:space-y-6">
             <div>
               <Label
@@ -168,26 +187,9 @@ const Tracker = ({ params }: TrackerProps) => {
 
         {manualRequestId && (
           <>
-            <Card className="mb-8 md:mb-12 p-6 md:p-8 shadow-2xl bg-gradient-to-br from-white to-blue-50 border-0">
-              <div className="space-y-4 md:space-y-6">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-900">
-                    Request Progress
-                  </h2>
-                  <Badge className="bg-blue-100 text-blue-700 px-3 md:px-4 py-1 md:py-2 text-xs md:text-sm font-semibold">
-                    {Math.round(currentProgress)}% Complete
-                  </Badge>
-                </div>
-                <StatusProgress progress={currentProgress} />
-                <div className="text-center text-xs md:text-sm text-gray-600 font-medium">
-                  Step {currentStatus} of {STATUSES.length}
-                </div>
-              </div>
-            </Card>
-
             {currentStatus >= 3 && <TechnicianCard />}
 
-            {currentStatus === 4 && (
+            {currentStatus >= 4 && (
               <Card className="mb-8 md:mb-12 p-6 md:p-8 shadow-2xl bg-white border-0">
                 <div className="space-y-4 md:space-y-6">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
